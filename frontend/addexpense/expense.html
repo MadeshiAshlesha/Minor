@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="expense.css">
+    <title>Expense Manager</title>
+</head>
+<body>
+    <header>
+        <h1>Expense Manager</h1>
+    </header>
+    <main>
+        <section id="new-group-section">
+            <h2>Create a New Group</h2>
+            <form id="new-group-form">
+                <input type="text" id="group-name" placeholder="Group Name" required>
+                <button type="submit">Create</button>
+            </form>
+        </section>
+        <section id="add-expense-section">
+            <h2>Add an Expense</h2>
+            <form id="add-expense-form">
+                <input type="text" id="expense-name" placeholder="Expense Name" required>
+                <input type="number" id="total-expense" placeholder="Total Expense" required>
+                <label for="expense-type">Expense Type:</label>
+                <select id="expense-type" required>
+                    <option value="equal">Equal</option>
+                    <option value="exact">Exact</option>
+                </select>
+                <div id="exact-expense-details" style="display: none;">
+                    <div id="friends-list-container">
+                        <div class="friend-input">
+                            <input type="text" class="friend-name" placeholder="Friend Name" required>
+                            <input type="number" class="amount-paid" placeholder="Amount Paid" required>
+                        </div>
+                    </div>
+                    <button type="button" id="add-friend-button">Add Friend</button>
+                </div>
+                <input type="number" id="split-count" placeholder="Split Among How Many People" required>
+                <button type="submit" id="submit-button">Add Expense</button>
+            </form>
+        </section>
+    </main>
+    <script src="expense.js"></script>
+    <script>
+        // Add JavaScript code to dynamically add friend input fields and handle the pop-up
+        const expenseTypeSelect = document.getElementById('expense-type');
+        const exactExpenseDetails = document.getElementById('exact-expense-details');
+        const friendsListContainer = document.getElementById('friends-list-container');
+        const addFriendButton = document.getElementById('add-friend-button');
+        const submitButton = document.getElementById('submit-button');
+
+        expenseTypeSelect.addEventListener('change', function() {
+            if (expenseTypeSelect.value === 'exact') {
+                exactExpenseDetails.style.display = 'block';
+            } else {
+                exactExpenseDetails.style.display = 'none';
+            }
+        });
+
+        addFriendButton.addEventListener('click', function() {
+            const friendInput = document.createElement('div');
+            friendInput.classList.add('friend-input');
+            friendInput.innerHTML = `
+                <input type="text" class="friend-name" placeholder="Friend Name" required>
+                <input type="number" class="amount-paid" placeholder="Amount Paid" required>
+            `;
+            friendsListContainer.appendChild(friendInput);
+        });
+
+        submitButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            const expenseType = expenseTypeSelect.value;
+            const totalExpense = parseFloat(document.getElementById('total-expense').value);
+
+            if (expenseType === 'equal') {
+                // Calculate and show the amount to be split equally
+                const splitCount = parseInt(document.getElementById('split-count').value);
+                const equalAmount = totalExpense / splitCount;
+                alert(`Each person should pay: ${equalAmount.toFixed(2)}`);
+            } else if (expenseType === 'exact') {
+                // Handle the logic for the "exact" type, e.g., showing a pop-up for exact expense details
+                // You can customize this part based on your needs
+                const friendsInputs = document.querySelectorAll('.friend-input');
+                let details = 'Exact expense details:\n';
+                friendsInputs.forEach((input, index) => {
+                    const friendName = input.querySelector('.friend-name').value;
+                    const amountPaid = parseFloat(input.querySelector('.amount-paid').value);
+                    details += `${friendName} should pay ${amountPaid.toFixed(2)}\n`;
+                });
+                alert(details);
+            }
+        });
+    </script>
+</body>
+</html>
